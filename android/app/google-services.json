@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "611277065780",
+    "project_id": "parkshare-588bb",
+    "storage_bucket": "parkshare-588bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611277065780:android:3a20bfda50ef333f0e0461",
+        "android_client_info": {
+          "package_name": "com.example.v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFBKVjmamAwgBMqpZjp94vM7DVGjRM1-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

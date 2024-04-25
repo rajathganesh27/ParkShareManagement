@@ -2,15 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:v1/constansts.dart';
-import 'package:v1/model/user_model.dart';
+import 'package:v1/constants.dart';
+import 'package:v1/mobileauth/model/user_model.dart';
 import 'package:v1/screens/home_screen.dart';
 import 'package:v1/screens/onboarding/onboarding_scrreen.dart';
 import 'package:v1/screens/profile/profile_menu.dart';
-import 'package:v1/provider/auth_provider.dart';
+import 'package:v1/mobileauth/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:iconsax/iconsax.dart';
-
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -32,7 +31,7 @@ class ProfileScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-          Navigator.push(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
@@ -113,10 +112,8 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: defaultPadding),
               Center(
                 child: ElevatedButton(
-                  onPressed: (
-
-                  ) {
-                     ap.userSignOut().then(
+                  onPressed: () {
+                    ap.userSignOut().then(
                           (value) => Navigator.push(
                             context,
                             MaterialPageRoute(

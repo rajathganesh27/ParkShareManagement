@@ -8,7 +8,6 @@ class UserModel {
   String createdAt;
   String dob; // Date of birth
 
-
   UserModel({
     required this.firstname,
     required this.lastname,
@@ -18,7 +17,6 @@ class UserModel {
     required this.uid,
     required this.createdAt,
     required this.dob,
-
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -31,7 +29,6 @@ class UserModel {
       uid: map['uid'] ?? '',
       createdAt: map['createdAt'] ?? '',
       dob: map['dob'] ?? '',
-       // Added password mapping
     );
   }
 
@@ -45,7 +42,6 @@ class UserModel {
       "phoneNumber": phoneNumber,
       "createdAt": createdAt,
       "dob": dob,
-       // Added password mapping
     };
   }
 }

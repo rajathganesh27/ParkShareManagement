@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:v1/constansts.dart';
-import 'package:v1/provider/auth_provider.dart';
+import 'package:v1/constants.dart';
+import 'package:v1/mobileauth/provider/auth_provider.dart';
 import 'package:v1/screens/home_screen.dart';
 
-import '../../components/dot_indicators.dart';
+import '../../mobileauth/components/dot_indicators.dart';
 import '../auth/sign_in_screen.dart';
 import 'components/onboard_content.dart';
 
@@ -69,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             () => Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const  HomeScreen(),
+                                builder: (context) => const HomeScreen(),
                               ),
                             ),
                           );

@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:v1/emailauth/auth.dart';
+import 'package:v1/emailauth/pages/loginpage.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({Key? key}) : super(key: key);
@@ -19,13 +21,15 @@ class _SignupFormState extends State<SignupForm> {
   late DateTime? selectedDOB = DateTime.now(); // Variable to store selected DOB
   final firstnameController = TextEditingController();
   final lastnameController = TextEditingController();
-  final emailController = TextEditingController();
+  final phoneNumberController =
+      TextEditingController(); // Controller for phone number
   final slotsController =
       TextEditingController(); // Controller for slots available
   final landAreaController =
       TextEditingController(); // Controller for land area
   double? _latitude;
   double? _longitude;
+  String userEmail = Auth().currentUser!.email!;
 
   List<String> imageUrls = [];
   List<String> ownershipImageUrls = [];
@@ -91,13 +95,13 @@ class _SignupFormState extends State<SignupForm> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Email
-
+                  // Phone number
                   TextFormField(
-                    controller: emailController,
+                    controller: phoneNumberController,
+                    keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email),
+                      labelText: 'Phone Number',
+                      prefixIcon: const Icon(Icons.phone),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -201,6 +205,11 @@ class _SignupFormState extends State<SignupForm> {
       setState(() {
         selectedDOB = picked;
       });
+
+      // Format the selected date
+      String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDOB!);
+      // Save the formatted date to the database or wherever you need to store it
+      print('Formatted Date: $formattedDate');
     }
   }
 
@@ -361,13 +370,11 @@ class _SignupFormState extends State<SignupForm> {
       final pickedFiles = await picker.pickMultiImage(
         maxWidth: 600,
       );
-      if (pickedFiles != null) {
-        for (var file in pickedFiles) {
-          final imageUrl = await _uploadImageToStorage(file.path!);
-          setState(() {
-            imageUrls.add(imageUrl);
-          });
-        }
+      for (var file in pickedFiles) {
+        final imageUrl = await _uploadImageToStorage(file.path);
+        setState(() {
+          imageUrls.add(imageUrl);
+        });
       }
     } catch (error) {
       print('Error picking image: $error');
@@ -440,8 +447,8 @@ class _SignupFormState extends State<SignupForm> {
         // Button to add images
         TextButton.icon(
           onPressed: _isUploadingOwnershipImages ? null : _addOwnershipImages,
-          icon: Icon(Icons.add_a_photo),
-          label: Text('Add Ownership Proof'),
+          icon: const Icon(Icons.add_a_photo),
+          label: const Text('Add Ownership Proof'),
         ),
       ],
     );
@@ -476,7 +483,7 @@ class _SignupFormState extends State<SignupForm> {
                   top: 0,
                   right: 0,
                   child: IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () => _deleteOwnershipImage(index),
                   ),
                 ),
@@ -498,13 +505,11 @@ class _SignupFormState extends State<SignupForm> {
       final pickedFiles = await picker.pickMultiImage(
         maxWidth: 600,
       );
-      if (pickedFiles != null) {
-        for (var file in pickedFiles) {
-          final imageUrl = await _uploadOwnershipImageToStorage(file.path!);
-          setState(() {
-            ownershipImageUrls.add(imageUrl);
-          });
-        }
+      for (var file in pickedFiles) {
+        final imageUrl = await _uploadOwnershipImageToStorage(file.path);
+        setState(() {
+          ownershipImageUrls.add(imageUrl);
+        });
       }
     } catch (error) {
       print('Error picking image: $error');
@@ -560,15 +565,16 @@ class _SignupFormState extends State<SignupForm> {
   }
 
   // Method to create account
+// Method to create account
   void _createAccount() async {
     try {
       // Check if all required fields are filled
       if (firstnameController.text.isEmpty ||
           lastnameController.text.isEmpty ||
-          emailController.text.isEmpty ||
           selectedDOB == null ||
           slotsController.text.isEmpty ||
           landAreaController.text.isEmpty ||
+          phoneNumberController.text.isEmpty ||
           _latitude == null ||
           _longitude == null ||
           imageUrls.isEmpty ||
@@ -581,12 +587,14 @@ class _SignupFormState extends State<SignupForm> {
         return;
       }
 
+      String formattedDOB = DateFormat('dd/MM/yyyy').format(selectedDOB!);
+
       // Add data to Firestore
       await _reference.add({
         'firstname': firstnameController.text,
         'lastname': lastnameController.text,
-        'email': emailController.text,
-        'dob': selectedDOB,
+        'phone': phoneNumberController.text,
+        'dob': formattedDOB,
         'slots': int.parse(slotsController.text),
         'land_area': double.parse(landAreaController.text),
         'latitude': _latitude,
@@ -597,6 +605,8 @@ class _SignupFormState extends State<SignupForm> {
         'shaded_structure': shadedStructure,
         'images': imageUrls,
         'ownership_images': ownershipImageUrls,
+        'email': userEmail,
+        'verification': false,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -608,7 +618,7 @@ class _SignupFormState extends State<SignupForm> {
       // Clear all fields after successful account creation
       firstnameController.clear();
       lastnameController.clear();
-      emailController.clear();
+      phoneNumberController.clear();
       selectedDOB = null;
       slotsController.clear();
       landAreaController.clear();
@@ -620,6 +630,13 @@ class _SignupFormState extends State<SignupForm> {
         security = false;
         shadedStructure = false;
       });
+
+      // Navigate to the login page
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
     } catch (error) {
       print('Error creating account: $error');
       ScaffoldMessenger.of(context).showSnackBar(

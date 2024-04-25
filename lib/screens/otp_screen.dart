@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
-import 'package:v1/provider/auth_provider.dart';
+import 'package:v1/mobileauth/provider/auth_provider.dart';
 import 'package:v1/screens/home_screen.dart';
 import 'package:v1/screens/signup.dart';
-import 'package:v1/utils/utils.dart';
+import 'package:v1/mobileauth/utils/utils.dart';
 
 class OtpScreen extends StatefulWidget {
   final String verificationId;
@@ -169,7 +169,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                 (value) => Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>  const HomeScreen(),
+                                      builder: (context) => const HomeScreen(),
                                     ),
                                     (route) => false),
                               ),

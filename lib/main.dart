@@ -1,13 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:v1/constansts.dart';
+import 'package:v1/constants.dart';
+import 'package:v1/emailauth/widget_tree.dart';
 import 'package:v1/firebase_options.dart';
-import 'package:v1/map/marker.dart';
-import 'package:v1/provider/auth_provider.dart';
-import 'package:v1/screens/LandingPage.dart';
+import 'package:v1/mobileauth/provider/auth_provider.dart';
 import 'package:v1/screens/onboarding/onboarding_scrreen.dart';
-import 'package:v1/screens/signup.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +47,7 @@ class MyApp extends StatelessWidget {
             hintStyle: TextStyle(color: bodyTextColor),
           ),
         ),
-        home: SignupForm(),
+        home: const WidgetTree(),
       ),
     );
   }

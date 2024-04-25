@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:v1/model/user_model.dart';
+import 'package:v1/mobileauth/model/user_model.dart';
 import 'package:v1/screens/otp_screen.dart';
-import 'package:v1/utils/utils.dart';
+import 'package:v1/mobileauth/utils/utils.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isSignedIn = false;
@@ -75,7 +75,7 @@ class AuthProvider extends ChangeNotifier {
 
       _uid = user.uid;
       onSuccess();
-    
+
       _isLoading = false;
       notifyListeners();
     } on FirebaseAuthException catch (e) {
@@ -87,7 +87,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> checkExistingUser() async {
     DocumentSnapshot snapshot =
-        await _firebaseFirestore.collection("users").doc(_uid).get();
+        await _firebaseFirestore.collection("plotowners").doc(_uid).get();
     if (snapshot.exists) {
       print("USER EXISTS");
       return true;
@@ -111,7 +111,7 @@ class AuthProvider extends ChangeNotifier {
       _userModel = userModel;
 
       await _firebaseFirestore
-          .collection("users")
+          .collection("plotowners")
           .doc(_uid)
           .set(userModel.toMap())
           .then((value) {
@@ -128,7 +128,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future getDataFromFirestore() async {
     await _firebaseFirestore
-        .collection("users")
+        .collection("plotowners")
         .doc(_firebaseAuth.currentUser!.uid)
         .get()
         .then((DocumentSnapshot snapshot) {

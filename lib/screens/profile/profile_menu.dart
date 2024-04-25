@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:v1/constansts.dart';
+import 'package:v1/constants.dart';
 
 class ProfileMenu extends StatelessWidget {
   const ProfileMenu({

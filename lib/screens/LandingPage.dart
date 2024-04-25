@@ -1,27 +1,49 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
+import 'package:v1/emailauth/auth.dart';
+import 'package:v1/emailauth/pages/loginpage.dart';
 
 class LandingPage extends StatelessWidget {
-  final String email;
+  // final String email;
+  final User? user = Auth().currentUser;
 
-  LandingPage({required this.email});
+  LandingPage({super.key});
+
+  Future<void> signOut(BuildContext context) async {
+    Auth auth = Auth();
+    await auth.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Customer Details'),
+        title: const Text('Customer Details'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              await signOut(
+                  context); // Call the signOut function with the context
+            },
+          ),
+        ],
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('plotowners')
-            .where('email', isEqualTo: email)
+            .where('email', isEqualTo: user?.email)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -29,14 +51,14 @@ class LandingPage extends StatelessWidget {
           }
 
           if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No data found'));
+            return const Center(child: Text('No data found'));
           }
 
           var data = snapshot.data!.docs.first.data() as Map<String, dynamic>;
           bool verification = data['verification'] ?? false;
 
           if (verification) {
-            return CustomerDetailsPage(plotId: email);
+            return CustomerDetailsPage();
           } else {
             return const Center(
               child: Text(
@@ -54,16 +76,16 @@ class LandingPage extends StatelessWidget {
 }
 
 class CustomerDetailsPage extends StatelessWidget {
-  final String plotId;
+  final User? user = Auth().currentUser;
 
-  CustomerDetailsPage({required this.plotId});
+  CustomerDetailsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('customers')
-          .where('plot_id', isEqualTo: plotId)
+          .collection('users')
+          .where('email', isEqualTo: user?.email)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -81,39 +103,29 @@ class CustomerDetailsPage extends StatelessWidget {
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
-            var customerData =
+            var userData =
                 snapshot.data!.docs[index].data() as Map<String, dynamic>;
-            var modelName = customerData['model_name'] ?? 'Unknown';
-            var name = customerData['name'] ?? 'Unknown';
-            var bookingTime = customerData['booking_time'] != null
-                ? (customerData['booking_time'] as Timestamp).toDate()
-                : null;
 
-            String formattedTime = bookingTime != null
-                ? DateFormat.Hms().format(bookingTime)
-                : 'Unknown';
+            var firstname = userData['firstname'] ?? 'Unknown';
+            var lastname = userData['lastname'] ?? 'Unknown';
+            var email = userData['email'] ?? 'Unknown';
+            var phoneNumber = userData['phoneNumber'] ?? 'Unknown';
 
             return Card(
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Name: $name',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5),
-                        Text('Model: $modelName'),
-                        SizedBox(height: 5),
-                        Text('Booking Time: $formattedTime'),
-                      ],
+                    Text(
+                      'Name: $firstname $lastname',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    BookingDurationTimer(bookingTime),
+                    const SizedBox(height: 5),
+                    Text('Email: $email'),
+                    const SizedBox(height: 5),
+                    Text('Phone Number: $phoneNumber'),
                   ],
                 ),
               ),
@@ -128,7 +140,7 @@ class CustomerDetailsPage extends StatelessWidget {
 class BookingDurationTimer extends StatefulWidget {
   final DateTime? bookingTime;
 
-  BookingDurationTimer(this.bookingTime);
+  const BookingDurationTimer(this.bookingTime, {super.key});
 
   @override
   _BookingDurationTimerState createState() => _BookingDurationTimerState();
@@ -142,7 +154,7 @@ class _BookingDurationTimerState extends State<BookingDurationTimer> {
   void initState() {
     super.initState();
     if (widget.bookingTime != null) {
-      _timer = Timer.periodic(Duration(seconds: 1), _updateTimer);
+      _timer = Timer.periodic(const Duration(seconds: 1), _updateTimer);
     }
   }
 
@@ -164,8 +176,8 @@ class _BookingDurationTimerState extends State<BookingDurationTimer> {
   Widget build(BuildContext context) {
     String formattedElapsedTime = _formatDuration(_elapsedTime);
     return Text(
-      '$formattedElapsedTime',
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      formattedElapsedTime,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     );
   }
 

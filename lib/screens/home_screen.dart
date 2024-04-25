@@ -2,10 +2,9 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:v1/provider/auth_provider.dart';
+import 'package:v1/mobileauth/provider/auth_provider.dart';
 import 'package:v1/screens/onboarding/onboarding_scrreen.dart';
 import 'package:v1/screens/profile/profile_screen.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     // Navigate based on the selected index
     if (_selectedIndex == 0) {
-       Navigator.push(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
@@ -41,10 +40,19 @@ class _HomeScreenState extends State<HomeScreen> {
     final ap = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
-        items: const [  CurvedNavigationBarItem(child:Icon(Icons.home,color: Color.fromARGB(255, 55, 55, 55),)),
-      CurvedNavigationBarItem(child: Icon(Icons.maps_home_work,
-                    color: Color.fromARGB(255, 55, 55, 55))),
-      CurvedNavigationBarItem(child: Icon(Icons.person, color: Color.fromARGB(255, 55, 55, 55))),],
+        items: const [
+          CurvedNavigationBarItem(
+              child: Icon(
+            Icons.home,
+            color: Color.fromARGB(255, 55, 55, 55),
+          )),
+          CurvedNavigationBarItem(
+              child: Icon(Icons.maps_home_work,
+                  color: Color.fromARGB(255, 55, 55, 55))),
+          CurvedNavigationBarItem(
+              child:
+                  Icon(Icons.person, color: Color.fromARGB(255, 55, 55, 55))),
+        ],
 
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         color: const Color(0xFFBC0063),

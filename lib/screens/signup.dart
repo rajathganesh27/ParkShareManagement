@@ -21,6 +21,9 @@ class _SignupFormState extends State<SignupForm> {
   late DateTime? selectedDOB = DateTime.now(); // Variable to store selected DOB
   final firstnameController = TextEditingController();
   final lastnameController = TextEditingController();
+  final addressLine1Controller = TextEditingController();
+  final addressLine2Controller = TextEditingController();
+
   final phoneNumberController =
       TextEditingController(); // Controller for phone number
   final slotsController =
@@ -46,10 +49,14 @@ class _SignupFormState extends State<SignupForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop(); // Navigate back to the previous screen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            ); // Navigate back to the previous screen
           },
         ),
       ),
@@ -95,18 +102,52 @@ class _SignupFormState extends State<SignupForm> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  // Address line 1
+                  TextFormField(
+                    controller: addressLine1Controller,
+                    decoration: InputDecoration(
+                      labelText: 'Address Line 1',
+                      prefixIcon: Icon(Icons.location_on),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+// Address line 2
+                  TextFormField(
+                    controller: addressLine2Controller,
+                    decoration: InputDecoration(
+                      labelText: 'Address Line 2',
+                      prefixIcon: Icon(Icons.location_on),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
                   // Phone number
                   TextFormField(
                     controller: phoneNumberController,
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                       labelText: 'Phone Number',
+                      prefixText: '+91 ',
                       prefixIcon: const Icon(Icons.phone),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
+                    onChanged: (value) {
+                      if (value.length > 10) {
+                        phoneNumberController.text =
+                            value.substring(0, 10); // Limit to 10 digits
+                      }
+                    },
                   ),
+
                   const SizedBox(height: 16),
                   // Date of Birth
                   TextFormField(
@@ -146,7 +187,7 @@ class _SignupFormState extends State<SignupForm> {
                     controller: landAreaController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Land Area (sq. km)',
+                      labelText: 'Land Area (sq.m)',
                       prefixIcon: const Icon(Icons.landscape),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -607,6 +648,8 @@ class _SignupFormState extends State<SignupForm> {
         'ownership_images': ownershipImageUrls,
         'email': userEmail,
         'verification': false,
+        'address_line_1': addressLine1Controller.text,
+        'address_line_2': addressLine2Controller.text,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -698,7 +741,6 @@ class _LocationInputState extends State<LocationInput> {
           color: Colors.black,
           width: 1.0,
         ),
-        borderRadius: BorderRadius.circular(8.0), // Add border radius
       ),
       child: _locationData != null
           ? FlutterMap(

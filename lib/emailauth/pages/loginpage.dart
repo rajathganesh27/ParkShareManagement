@@ -53,23 +53,43 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _title() {
-    return const Text('Firebase Auth');
+    return const Text(
+      'ParkShare',
+      style: TextStyle(
+          color: Color(0xFFBC0063), fontWeight: FontWeight.bold, fontSize: 30),
+    );
   }
 
-  Widget _entryField(
-    String title,
-    TextEditingController controller,
-  ) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: title,
+  Widget _entryField(String title, TextEditingController controller) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.3), // Subtle border color
+        ),
+      ),
+      child: TextFormField(
+        controller: controller,
+        obscureText: title == 'password',
+        keyboardType:
+            title == 'email' ? TextInputType.emailAddress : TextInputType.text,
+        decoration: InputDecoration(
+          hintText: title == 'email' ? "Email" : "Password",
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          border: InputBorder.none,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Colors.black12),
+          ),
+        ),
       ),
     );
   }
 
   Widget _errorMessage() {
-    return Text(errorMessage == '' ? '' : 'Humm ? $errorMessage');
+    return Text(errorMessage == '' ? '' : '$errorMessage');
   }
 
   Widget _submitButton() {
@@ -94,9 +114,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: _title(),
-      ),
+      appBar: AppBar(title: _title()),
       body: Container(
         height: double.infinity,
         width: double.infinity,
